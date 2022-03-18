@@ -1,0 +1,51 @@
+####################### POSTGRES DATABASE ####################
+version: "3.8"
+services:
+  postgres:
+    image: postgres:latest
+    networks:
+      - minha-rede
+    container_name: postgresdb
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: escoladb
+    command:
+      - "postgres"
+      - "-c"
+      - "max_prepared_transactions=100"
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: everton/escola-back
+    container_name: escola-back
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+    networks:
+      - minha-rede
+    depends_on:
+      - postgres
+    links:
+      - postgres
+  angular:
+    build:
+      context: ./Angular
+      dockerfile: ./Dockerfile
+    image: everton/escola-front
+    container_name: escola-front
+    ports:
+      - "8081:80"
+volumes:
+  postgres-data:
+networks:
+  minha-rede:
+    driver: bridge
