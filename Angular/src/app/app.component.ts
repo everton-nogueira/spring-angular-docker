@@ -4,6 +4,8 @@ import {Estudante} from "./model/estudante-model";
 import {EstudanteService} from "./service/estudante-service";
 import {CustomValidators} from "./shared/CustomValidators";
 import {formatDate} from "@angular/common";
+import packageJson from '../../package.json';
+import {InfraService} from "./service/infra-service";
 
 @Component({
   selector: 'app-root',
@@ -11,6 +13,8 @@ import {formatDate} from "@angular/common";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
+  versionFront: String = packageJson.version;
+  versionBack: String = "";
   colunas: string[] = ['id', 'nome', 'email', 'dataNascimento', 'areaInteresse', 'editar', 'deletar'];
   isAlteracao = false;
   formGroup: FormGroup;
@@ -19,12 +23,16 @@ export class AppComponent implements OnInit{
 
   constructor(private fb: FormBuilder,
               @Inject( LOCALE_ID ) private locale: string,
-              private service: EstudanteService) {
+              private estudanteService: EstudanteService,
+              private infraService: InfraService) {
     this.formGroup = this.getFormGroup();
     this.resetaForm();
   }
 
   ngOnInit(): void {
+    this.infraService.buscaVersao().subscribe((retorno) => {
+      this.versionBack = retorno.versao;
+    })
     this.listarTodos();
   }
 
@@ -43,7 +51,7 @@ export class AppComponent implements OnInit{
   }
 
   cadastrar() {
-    this.service.cadastrar(this.montaEstudante()).subscribe((retorno) => {
+    this.estudanteService.cadastrar(this.montaEstudante()).subscribe((retorno) => {
       alert(`Estudante ${retorno.nome} cadastrado com sucesso!`);
       this.resetaForm();
       this.listarTodos();
@@ -64,7 +72,7 @@ export class AppComponent implements OnInit{
   editar() {
     let estudante = this.montaEstudante();
     estudante = {...estudante, id: this.estudante?.id}
-    this.service.alterar(estudante).subscribe((retorno) => {
+    this.estudanteService.alterar(estudante).subscribe((retorno) => {
       alert(`Estudante ${retorno.nome} alterado com sucesso!`);
       this.listarTodos();
       this.resetaForm()
@@ -74,7 +82,7 @@ export class AppComponent implements OnInit{
   }
 
   listarTodos() {
-    this.service.listarTodos().subscribe((retorno) => {
+    this.estudanteService.listarTodos().subscribe((retorno) => {
       this.estudantes = retorno;
     }, () => {
       alert(`Ocorreu um erro ao consultar os estudantes!`);
@@ -82,7 +90,7 @@ export class AppComponent implements OnInit{
   }
 
   buscarPorNome() {
-    this.service.buscarPorNome(this.montaEstudante()).subscribe((retorno) => {
+    this.estudanteService.buscarPorNome(this.montaEstudante()).subscribe((retorno) => {
       this.estudante = retorno;
     }, () => {
       alert(`Ocorreu um erro ao consultar os estudantes!`);
@@ -91,7 +99,7 @@ export class AppComponent implements OnInit{
 
   removerEstudante(estudante: Estudante) {
     if(confirm('Deseja realmente excluir?')){
-      this.service.deletar(estudante).subscribe(() => {
+      this.estudanteService.deletar(estudante).subscribe(() => {
         alert(`Estudante excluido com sucesso!`);
         this.resetaForm();
         this.listarTodos();
