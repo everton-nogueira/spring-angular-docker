@@ -9,3 +9,17 @@
 .tabela-listagem{
   width: 100%;
 }
+
+.button-primary {
+  width: 25%;
+}
+
+.button-secondary {
+  margin-left: 15px;
+  width: 25%;
+}
+
+:host ::ng-deep thead th{
+  background: #0D47A1;
+  color: #FFFFFF;
+}

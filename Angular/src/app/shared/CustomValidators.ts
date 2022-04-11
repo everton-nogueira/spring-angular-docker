@@ -1,7 +1,7 @@
 import {FormControl} from "@angular/forms";
 
 export class CustomValidators {
-  static ValidateDate(control: FormControl) {
+  static validateDate(control: FormControl) {
     const hoje = new Date();
     const nasc  = new Date(control.value);
     let idade = hoje.getFullYear() - nasc.getFullYear();
@@ -12,6 +12,10 @@ export class CustomValidators {
     if(idade < 15 || idade > 90){
       return {erro: 'Pessoas menores de 15 não podem se cadastrar.'};
     }
+    return null;
+  }
+
+  static validateCPF(control: FormControl) {
     return null;
   }
 }

@@ -18,32 +18,36 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatListModule} from "@angular/material/list";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from "@angular/material/snack-bar";
+import {NgxMaskModule} from "ngx-mask";
+import { CpfPipe } from './shared/cpf.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CpfPipe
   ],
-  imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    BrowserAnimationsModule,
-    MatTableModule,
-    MatIconModule,
-    HttpClientModule,
-    MatButtonModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatToolbarModule,
-    RouterModule.forRoot([
-      {path: '', pathMatch: 'full', component: AppComponent}
-    ]),
-    MatCardModule,
-    MatSelectModule,
-    MatListModule,
-    MatGridListModule,
-    MatSnackBarModule
-  ],
+    imports: [
+        BrowserModule,
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatTableModule,
+        MatIconModule,
+        HttpClientModule,
+        MatButtonModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatToolbarModule,
+        RouterModule.forRoot([
+            {path: '', pathMatch: 'full', component: AppComponent}
+        ]),
+        MatCardModule,
+        MatSelectModule,
+        MatListModule,
+        MatGridListModule,
+        MatSnackBarModule,
+        NgxMaskModule.forRoot()
+    ],
   providers: [{
     provide: MAT_DATE_FORMATS,
     useValue: {

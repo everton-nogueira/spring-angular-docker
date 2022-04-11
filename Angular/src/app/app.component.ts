@@ -16,7 +16,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 export class AppComponent implements OnInit{
   versionFront: String = packageJson.version;
   versionBack: String = "";
-  colunas: string[] = ['id', 'nome', 'email', 'dataNascimento', 'areaInteresse', 'editar', 'deletar'];
+  colunas: string[] = ['id', 'nome', 'cpf', 'email', 'dataNascimento', 'areaInteresse', 'editar', 'deletar'];
   isAlteracao = false;
   formGroup: FormGroup;
   estudantes: Estudante[] = [];
@@ -54,8 +54,9 @@ export class AppComponent implements OnInit{
   private getFormGroup() {
     return this.fb.group({
       nome: [null, Validators.required],
+      cpf: [null, [Validators.required, CustomValidators.validateCPF]],
       email: [null, [Validators.required, Validators.email]],
-      dataNascimento: [null, [Validators.required, CustomValidators.ValidateDate]],
+      dataNascimento: [null, [Validators.required, CustomValidators.validateDate]],
       areaInteresse: [null, Validators.required]
     });
   }
@@ -73,6 +74,7 @@ export class AppComponent implements OnInit{
   prepararEdicao(estudante: Estudante) {
     this.isAlteracao = true;
     this.formGroup.get('nome')?.setValue(estudante.nome);
+    this.formGroup.get('cpf')?.setValue(estudante.cpf);
     this.formGroup.get('email')?.setValue(estudante.email);
     this.formGroup.get('dataNascimento')?.setValue(formatDate(estudante.dataNascimento, 'yyyy-MM-dd', this.locale, '+0000'));
     this.formGroup.get('areaInteresse')?.setValue(estudante.areaInteresse);
@@ -122,6 +124,7 @@ export class AppComponent implements OnInit{
   private montaEstudante() {
     const estudante: Estudante = {
       nome: this.formGroup.get('nome')?.value,
+      cpf: this.formGroup.get('cpf')?.value,
       email: this.formGroup.get('email')?.value,
       dataNascimento: this.formGroup.get('dataNascimento')?.value,
       areaInteresse: this.formGroup.get('areaInteresse')?.value,
