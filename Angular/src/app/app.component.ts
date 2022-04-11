@@ -1,11 +1,12 @@
-import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Component, Inject, LOCALE_ID, OnInit, ViewChild} from '@angular/core';
+import {FormBuilder, FormGroup, FormGroupDirective, Validators} from "@angular/forms";
 import {Estudante} from "./model/estudante-model";
 import {EstudanteService} from "./service/estudante-service";
 import {CustomValidators} from "./shared/CustomValidators";
 import {formatDate} from "@angular/common";
 import packageJson from '../../package.json';
 import {InfraService} from "./service/infra-service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-root',
@@ -21,16 +22,24 @@ export class AppComponent implements OnInit{
   estudantes: Estudante[] = [];
   private estudante?: Estudante;
 
+  @ViewChild(FormGroupDirective) formGroupDirective?: FormGroupDirective;
+
   constructor(private fb: FormBuilder,
               @Inject( LOCALE_ID ) private locale: string,
-              private estudanteService: EstudanteService,
-              private infraService: InfraService) {
+              private _estudanteService: EstudanteService,
+              private _infraService: InfraService,
+              private _snackBar: MatSnackBar) {
     this.formGroup = this.getFormGroup();
     this.resetaForm();
   }
 
+
+  openSnackBar(message: string) {
+    this._snackBar.open(message);
+  }
+
   ngOnInit(): void {
-    this.infraService.buscaVersao().subscribe((retorno) => {
+    this._infraService.buscaVersao().subscribe((retorno) => {
       this.versionBack = retorno.versao;
     })
     this.listarTodos();
@@ -38,7 +47,8 @@ export class AppComponent implements OnInit{
 
   resetaForm() {
     this.isAlteracao = false;
-    this.formGroup = this.getFormGroup();
+    setTimeout(() =>
+      this.formGroupDirective?.resetForm(), 0)
   }
 
   private getFormGroup() {
@@ -51,12 +61,12 @@ export class AppComponent implements OnInit{
   }
 
   cadastrar() {
-    this.estudanteService.cadastrar(this.montaEstudante()).subscribe((retorno) => {
-      alert(`Estudante ${retorno.nome} cadastrado com sucesso!`);
+    this._estudanteService.cadastrar(this.montaEstudante()).subscribe((retorno) => {
+      this.openSnackBar(`Estudante ${retorno.nome} cadastrado com sucesso!`);
       this.resetaForm();
       this.listarTodos();
     }, () => {
-      alert(`Ocorreu um erro ao cadastrar o estudante!`);
+      this.openSnackBar(`Ocorreu um erro ao cadastrar o estudante!`);
     });
   }
 
@@ -72,39 +82,39 @@ export class AppComponent implements OnInit{
   editar() {
     let estudante = this.montaEstudante();
     estudante = {...estudante, id: this.estudante?.id}
-    this.estudanteService.alterar(estudante).subscribe((retorno) => {
-      alert(`Estudante ${retorno.nome} alterado com sucesso!`);
+    this._estudanteService.alterar(estudante).subscribe((retorno) => {
+      this.openSnackBar(`Estudante ${retorno.nome} alterado com sucesso!`);
       this.listarTodos();
       this.resetaForm()
     }, () => {
-      alert(`Ocorreu um erro ao cadastrar o estudante!`);
+      this.openSnackBar(`Ocorreu um erro ao cadastrar o estudante!`);
     });
   }
 
   listarTodos() {
-    this.estudanteService.listarTodos().subscribe((retorno) => {
+    this._estudanteService.listarTodos().subscribe((retorno) => {
       this.estudantes = retorno;
     }, () => {
-      alert(`Ocorreu um erro ao consultar os estudantes!`);
+      this.openSnackBar(`Ocorreu um erro ao consultar os estudantes!`);
     });
   }
 
   buscarPorNome() {
-    this.estudanteService.buscarPorNome(this.montaEstudante()).subscribe((retorno) => {
+    this._estudanteService.buscarPorNome(this.montaEstudante()).subscribe((retorno) => {
       this.estudante = retorno;
     }, () => {
-      alert(`Ocorreu um erro ao consultar os estudantes!`);
+      this.openSnackBar(`Ocorreu um erro ao consultar os estudantes!`);
     });
   }
 
   removerEstudante(estudante: Estudante) {
     if(confirm('Deseja realmente excluir?')){
-      this.estudanteService.deletar(estudante).subscribe(() => {
-        alert(`Estudante excluido com sucesso!`);
+      this._estudanteService.deletar(estudante).subscribe(() => {
+        this.openSnackBar(`Estudante excluido com sucesso!`);
         this.resetaForm();
         this.listarTodos();
       }, () => {
-        alert(`Ocorreu um erro ao consultar os estudantes!`);
+        this.openSnackBar(`Ocorreu um erro ao consultar os estudantes!`);
       });
     }
   }
