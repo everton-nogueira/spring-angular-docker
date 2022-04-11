@@ -10,7 +10,13 @@ import {HttpClientModule} from "@angular/common/http";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
 import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatToolbarModule} from "@angular/material/toolbar";
 import {MAT_DATE_FORMATS, MatNativeDateModule} from "@angular/material/core";
+import {RouterModule} from "@angular/router";
+import {MatCardModule} from "@angular/material/card";
+import {MatSelectModule} from "@angular/material/select";
+import {MatListModule} from "@angular/material/list";
+import {MatGridListModule} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [
@@ -26,7 +32,15 @@ import {MAT_DATE_FORMATS, MatNativeDateModule} from "@angular/material/core";
     MatButtonModule,
     MatInputModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatToolbarModule,
+    RouterModule.forRoot([
+      {path: '', pathMatch: 'full', component: AppComponent}
+    ]),
+    MatCardModule,
+    MatSelectModule,
+    MatListModule,
+    MatGridListModule
   ],
   providers: [{
     provide: MAT_DATE_FORMATS,
