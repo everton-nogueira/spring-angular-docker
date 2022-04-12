@@ -20,6 +20,7 @@ public class Estudante {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String nome;
+    private String cpf;
     private String email ;
     private Date dataNascimento;
     private String areaInteresse;
